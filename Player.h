@@ -15,12 +15,10 @@ public:
 	bool alive = true;
 	int lives = 4;
 	int killGain = 200;
-	
-	Player();
-	Player(float x, float y);
-	
+
+	Player(float x = 0, float y = 0);
+
 	bool collides(vec2 p);
-	void update(std::vector<Dot>* dots, std::vector<Powerup>* powerups, Ghost* ghosts, int* score, GhostManager* ghostManager);
+	void update(std::vector<Dot>* dots, std::vector<Powerup>* powerups, int* score, GhostManager* ghostManager);
 	void draw();
 };
-

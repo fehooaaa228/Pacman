@@ -1,6 +1,5 @@
 #include "Application.h"
-#include "Globals.h"
-#include <raylib.h>
+#include <iostream>
 
 Application::Application() {}
 
@@ -18,13 +17,17 @@ void Application::run() {
 	}
 }
 
+void Application::resetGhostsNPlayer() {
+	p.pos = vec2(S_WIDTH / 2, C_SIZE * 26);
+
+	ghostManager = GhostManager(level);
+}
+
 void Application::init() {
 	dots.clear();
 	powerups.clear();
 
-	ghostManager = GhostManager();
-
-	p = Player(S_WIDTH / 2, C_SIZE * 26);
+	resetGhostsNPlayer();
 
 	for (int i = 0; i < map.size(); i++) {
 		for (int j = 0; j < map[i].size(); j++) {
@@ -34,10 +37,19 @@ void Application::init() {
 	}
 }
 
-void Application::reset() {
+void Application::drawConsumables() {
+	for (int i = 0; i < powerups.size(); i++) {
+		powerups[i].draw();
+	}
+
+	for (int i = 0; i < dots.size(); i++) {
+		dots[i].draw();
+	}
+}
+
+void Application::restartLevel() {
 	p.alive = true;
-	ghostManager = GhostManager();
-	p.pos = vec2(S_WIDTH / 2, C_SIZE * 26);
+	resetGhostsNPlayer();
 }
 
 void Application::win() {
@@ -45,9 +57,11 @@ void Application::win() {
 	init();
 }
 
-void Application::restart() {
+void Application::restartGame() {
 	p.alive = true;
+	p.lives = 4;
 	score = 0;
+	level = 0;
 	init();
 }
 
@@ -66,32 +80,26 @@ void Application::renderFrame() {
 
 	ClearBackground(BLACK);
 	drawUI();
+	drawConsumables();
 
-	for (int i = 0; i < powerups.size(); i++) {
-		powerups[i].draw();
-	}
+	ghostManager.update(p.pos, p.dir, dots.size());
 
-	for (int i = 0; i < dots.size(); i++) {
-		dots[i].draw();
-	}
+	p.update(&dots, &powerups, &score, &ghostManager);
 
-	ghostManager.update(p.pos);
-
-	p.update(&dots, &powerups, ghostManager.getGhosts(), &score, &ghostManager);
 	if (score > highScore) highScore = score;
 	if (dots.size() == 0) {
 		win();
 	}
 
-	p.draw();
-
 	if (!p.alive) {
 		p.lives--;
 		if (p.lives == 0) {
-			restart();
+			restartGame();
 		}
-		else reset();
+		else restartLevel();
 	}
+
+	p.draw();
 
 	EndDrawing();
 }

@@ -1,7 +1,7 @@
 #include "Ghost.h"
 #include <raylib.h>
 
-Ghost::Ghost(float x, float y) : MovingObject(x, y, GHOST_SPEED, C_SIZE), delay(0) {}
+Ghost::Ghost(float x, float y, int delay, Color color) : MovingObject(x, y, GHOST_SPEED, C_SIZE), delay(delay), color(color) {}
 
 bool Ghost::collides(vec2 p) {
 	return willCollide(p, '@') || willCollide(p, 'x');
@@ -9,7 +9,7 @@ bool Ghost::collides(vec2 p) {
 
 void Ghost::draw() {
 	if (alive) {
-		DrawCircle(pos.x, pos.y, r, (frightened) ? BLUE : RED);
+		DrawCircle(pos.x, pos.y, r, (frightened) ? BLUE : color);
 	}
 	else {
 		DrawCircle(pos.x, pos.y, r * 0.3, WHITE);
@@ -17,7 +17,7 @@ void Ghost::draw() {
 }
 
 void Ghost::update() {
-	if (delay == 0) {
+	if (delay < 1) {
 		if (alive) {
 			if (!free) {
 				moveOut();
@@ -31,18 +31,36 @@ void Ghost::update() {
 			moveToGhostHouse();
 		}
 	}
-	else delay--;
+	else {
+		moveUpNDown();
+		delay--;
+	}
 
 	draw();
+}
+
+void Ghost::moveUpNDown() {
+	if (pos.y < C_SIZE * 16 + 10) {
+		dir = dirs[2];
+	}
+	else if (pos.y > C_SIZE * 17 + 10) {
+		dir = dirs[0];
+	}
+
+	pos += dir;
 }
 
 std::vector<vec2> Ghost::findAvailableDirs() {
 	correctPos();
 
+	bool restricted = pos == vec2(C_SIZE * 13, C_SIZE * 14) || pos == vec2(C_SIZE * 16, C_SIZE * 14) || pos == vec2(C_SIZE * 13, C_SIZE * 26) || pos == vec2(C_SIZE * 16, C_SIZE * 26);
+
 	std::vector<vec2> ad;
 
 	for (int i = 0; i < 4; i++) {
-		if (dirs[i] != -dir && !collides(pos + dirs[i])) ad.push_back(dirs[i]);
+		if (dirs[i] != -dir && !collides(pos + dirs[i])) {
+			if(!(restricted && dirs[i] == dirs[0])) ad.push_back(dirs[i]);
+		}
 	}
 
 	return ad;
@@ -64,7 +82,10 @@ void Ghost::moveOut() {
 	else {
 		pos += vec2(0, -1);
 
-		if (pos == vec2(S_WIDTH / 2, SPACE_FOR_TEXT / 2 + C_SIZE * 12)) free = true;
+		if (pos == vec2(S_WIDTH / 2, SPACE_FOR_TEXT / 2 + C_SIZE * 12)) {
+			free = true;
+			dir = dirs[1];
+		}
 	}
 }
 
@@ -72,7 +93,7 @@ void Ghost::moveToTarget() {
 	std::vector<vec2> ad = findAvailableDirs();
 
 	vec2 nd;
-	float mind = 1000;
+	float mind = 10000;
 
 	for (int i = 0; i < ad.size(); i++) {
 		float l = length(target - (pos + ad[i]));
@@ -116,7 +137,7 @@ void Ghost::moveToGhostHouse() {
 
 		break;
 	}
-	
+
 }
 
 void Ghost::move(float _speed) {

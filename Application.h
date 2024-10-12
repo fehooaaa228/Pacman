@@ -1,12 +1,13 @@
 #pragma once
 
-#include <raylib.h>
-#include "Player.h"
-#include "Ghost.h"
+#include "Globals.h"
 #include "Dot.h"
 #include "Powerup.h"
+#include "Ghost.h"
 #include "GhostManager.h"
+#include "Player.h"
 #include <vector>
+#include <raylib.h>
 
 class Application
 {
@@ -15,10 +16,12 @@ public:
 	void run();
 	void init();
 	void renderFrame();
-	void reset();
-	void restart();
+	void restartLevel();
+	void restartGame();
 	void drawUI();
 	void win();
+	void drawConsumables();
+	void resetGhostsNPlayer();
 
 private:
 	Player p;

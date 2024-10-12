@@ -2,6 +2,7 @@
 
 #include "MovingObject.h"
 #include "Globals.h"
+#include <raylib.h>
 #include "vec2.h"
 
 class Ghost : public MovingObject {
@@ -12,8 +13,9 @@ public:
 	bool alive = true;
 	bool frightened = false;
 	vec2 target;
-	
-	Ghost(float x = 0, float y = 0);
+	Color color;
+
+	Ghost(float x = 0, float y = 0, int delay = 0, Color color = RED);
 
 	bool collides(vec2 p);
 
@@ -25,6 +27,8 @@ public:
 	void move(float speed);
 	void draw();
 	void die();
+	void moveUpNDown();
+
 	std::vector<vec2> findAvailableDirs();
 
 private:

@@ -25,11 +25,11 @@ void MovingObject::correctPos() {
 	if (a % 4 == 0) {
 		a = 0;
 		if ((int)pos.x % C_SIZE != 0) {
-			if ((int)pos.x % C_SIZE <= (int)speed && dir == dirs[3]){
+			if ((int)pos.x % C_SIZE <= (int)speed && dir == dirs[1]) {
 				pos.x = floor(pos.x / C_SIZE) * C_SIZE;
 				a++;
 			}
-			else if ((int)pos.x % C_SIZE >= C_SIZE - (int)speed && dir == dirs[1]) {
+			else if ((int)pos.x % C_SIZE >= C_SIZE - (int)speed && dir == dirs[3]) {
 				pos.x = ceil(pos.x / C_SIZE) * C_SIZE;
 				a++;
 			}

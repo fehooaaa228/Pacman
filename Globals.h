@@ -55,7 +55,7 @@ const unsigned short S_HEIGHT = C_SIZE * map.size();
 const float GHOST_SPEED = 1;
 const float PLAYER_SPEED = 1.5;
 
-static std::vector<vec2> dirs { vec2(0, -1), vec2(1, 0), vec2(0, 1), vec2(-1, 0) };
+static std::vector<vec2> dirs{ vec2(0, -1), vec2(-1, 0), vec2(0, 1), vec2(1, 0) };
 
 enum Modes {
 	SCATTERING,

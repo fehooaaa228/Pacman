@@ -8,18 +8,25 @@ class GhostManager
 {
 public:
 	Modes mode = SCATTERING;
-	int frightenedModeDuration = FPS * 9, frightenedMode = frightenedModeDuration;
+	float frightenedModeDuration;
+	int frightenedMode = frightenedModeDuration;
+	int scatterModeDuration, chasingModeDuration;
+	int wave = 1;
 
-	GhostManager();
+	GhostManager(int level = 1);
 
-	void update(vec2 playerPos);
-	void switchMode(Modes m, vec2 playerPos);
-	void setTargets(vec2 playerPos);
+	void update(vec2 playerPos, vec2 playerDir, int dotsRemaining);
+	void switchMode(Modes m, vec2 playerPos, vec2 playerDir, int dotsRemaining);
+	void setTargets(Modes mode, vec2 playerPos, vec2 playerDir, int dotsRemaining);
+	void setDurations();
+
 	Ghost* getGhosts();
 
 private:
 	Ghost* ghosts = new Ghost[4];
 	int switchCd = FPS * 7;
-	Modes lastMode;
+	Modes lastMode = mode;
+	int level;
+	int cruiseElroyMode = 0, keypoint1, keypoint2;
 };
 
